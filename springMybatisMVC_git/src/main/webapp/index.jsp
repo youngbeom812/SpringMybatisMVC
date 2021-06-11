@@ -10,7 +10,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>Spring MVC Mybatis	</h1>
+	<h1>Spring MVC Mybatis 이건 깃 테스트용이다!!	</h1>
 	<hr>
 	<c:choose>
 		<c:when test="${empty sessionScope.m }">
