@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="board">
+  <insert id="insertBoard" parameterType="b">
+  	insert into board values(board_seq.nextval,
+  							#{boardTitle},
+  							#{boardWriter},
+  							#{boardContent},
+  							to_char(sysdate,'yyyy-mm-dd'))
+  </insert>
+  <select id="selectBoardNo" resultType="int">
+  	select max(board_no) from board
+  </select>
+	<insert id="insertFile" parameterType="f">
+		insert into file_tbl values(file_seq.nextval,
+									#{filename},
+									#{filepath},
+									#{boardNo})
+	</insert>
+	<select id="selectBoardList" resultType="b">		<!-- 마이바티스는 자바형에 맞게 맞춰줘야한다. 
+																리절타입이 b(board)인 이유는 이 list안에 b하나하나를 반환해주는 느낌이다 쿼리문이 동작하는 생각하면-->
+		select 
+		board_no as boardNo,
+		board_title as boardTitle,
+		board_writer as boardWriter,
+		board_content as boardContent,
+		board_date as boardDate
+		from board order by board_no desc
+	</select>
+	<!-- <select id="selectOneBoard">
+		select board_no as boardNo,
+		board_title as boardTitle,
+		board_writer as boardWriter,
+		board_content as boardContent,
+		board_date as boardDate 
+		from board where board_no = #{boardNo}
+	</select> -->
+	<select id="selectOneBoard2" parameterType="int" resultMap="board">		<!-- 2개의 dao를 왔다갔다 하고 그 쿼리가 필요하기 때매 -->
+		select * from board where board_no = #{boardNo}
+	</select>
+	<select id="getFileList" parameterType="int" resultType="f">
+		select 
+		file_no as fileNo,
+		filename,
+		filepath,
+		board_no as boardNo
+		from file_tbl where board_no = #{board_no}			<!-- 이게 맞다 board_no가 -->
+	</select>
+	  	<resultMap type="b" id="board">		<!-- 보드객체타입이고, 위에 resultmap이 아이디와 같은거 -->
+	  		<result column="board_no" property="boardNo"/> 	<!-- 위에 selectOneBoard에서 수행한 쿼리를 db컬럼명을 속성값으로 -->
+	  		<result column="board_title" property="boardTitle"/>
+	  		<result column="board_writer" property="boardWriter"/>
+	  		<result column="board_content" property="boardContent"/>
+	  		<result column="board_date" property="boardDate"/>
+	  		<collection property="fileList" 
+	  					column="board_no"
+	  					javaType="java.util.ArrayList"
+	  					ofType="f"
+	  					select="getFileList"/>			<!-- 최종적으로 파일테이블에서 받은 걸 이 파일리스트에 넣으면 되죠 ? 보드넘버라는 컬럼명, 자바타입은 어레이리스의 임포트, oftype은 여기에 들어가는 파일 형태
+	  											변수명에 어레이리스트 filelist도 있기 떄문에 어레이리스트니깐 콜렉션으로 받는다 -->
+	  	</resultMap>		
+</mapper>
+
+

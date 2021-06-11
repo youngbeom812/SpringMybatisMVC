@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dm">
+  	<select id="selectGetDmList" parameterType="string" resultType="dm">
+  		select dm_no as dmNo,
+  			sender,
+  			receiver,
+  			dm_content as dmContent,
+  			dm_time as dmTime,
+  			read_status as readStatus
+  			from direct_message where receiver = #{memberId} 
+  	</select>
+  	<select id="selectSendList" parameterType="string" resultType="dm">
+  		select dm_no as dmNo,
+  			sender,
+  			receiver,
+  			dm_content as dmContent,
+  			dm_time as dmTime,
+  			read_status as readStatus
+  			from direct_message where sender = #{memberId}
+  	</select>
+  	<insert id="sendDm" parameterType="dm">
+  	insert into direct_message values(dm_seq.nextval,#{sender},#{receiver},#{dmContent},sysdate,'0')
+  	</insert>
+</mapper>
